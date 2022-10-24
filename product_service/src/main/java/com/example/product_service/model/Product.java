@@ -1,21 +1,68 @@
 package com.example.product_service.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
+import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.Table;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotNull;
 
-import lombok.Getter;
-import lombok.Setter;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-@Getter
-@Setter
+import com.example.product_service.model.enumeration.Size;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
 @Entity
-public class Product {
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "product")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+public class Product implements Serializable {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
+
+    @NotNull
+    @Column(name = "name", length = 254)
     private String name;
+
+    @Column(name = "description", nullable = true)
     private String description;
+
+    @Column(name = "brandname", nullable = true)
     private String brandName;
+
+    @NotNull
+    @DecimalMin(value = "0")
+    @Column(name = "price", precision = 21, scale = 2, nullable = false)
     private BigDecimal pricePerUnit;
-    private Long noOfStocksl;
-    private String imageUrl;
+
+    @Lob @Basic(fetch = FetchType.LAZY)
+    private byte[] image;
+
+    @Column(name = "image_content_type")
+    private String contentType;
+    
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "item_size", nullable = false)
+    private Size itemSize;
+
+
 }
