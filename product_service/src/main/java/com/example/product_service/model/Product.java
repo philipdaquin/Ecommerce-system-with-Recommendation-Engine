@@ -13,14 +13,17 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.example.product_service.model.enumeration.Size;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -63,6 +66,12 @@ public class Product implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "item_size", nullable = false)
     private Size itemSize;
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @NotNull
+    @NotBlank(message = "Product Category must be set in the product")
+    @JsonIgnoreProperties(value = {"products"}, allowGetters = true)
+    private ProductCategory productCategory;
 
 
 }
