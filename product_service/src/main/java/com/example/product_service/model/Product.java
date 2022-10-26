@@ -52,8 +52,8 @@ public class Product implements Serializable {
     private String brandName;
 
     @NotNull
-    @DecimalMin(value = "0")
     @Column(name = "price", precision = 21, scale = 2, nullable = false)
+    @DecimalMin(value = "0")
     private BigDecimal pricePerUnit;
 
     @Lob @Basic(fetch = FetchType.LAZY)
