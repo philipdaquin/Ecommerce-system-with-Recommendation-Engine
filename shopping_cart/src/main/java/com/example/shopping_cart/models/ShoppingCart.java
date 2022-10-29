@@ -1,5 +1,6 @@
 package com.example.shopping_cart.models;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashSet;
@@ -36,7 +37,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name = "shopping_cart")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class ShoppingCart {
+public class ShoppingCart implements Serializable {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -75,7 +76,35 @@ public class ShoppingCart {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JsonIgnoreProperties(value = {"user", "carts"}, allowSetters = true)
-    @Column(name = "custome_details", nullable = false)
     private CustomerDetails customerDetails;
 
+    public void calculateTotalPrice() { 
+        if (this.productOrder != null) { 
+            this.setTotalPrice(this.productOrder
+                .stream()
+                .map(ProductOrder::getTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add));
+        }
+    }
+    public ShoppingCart removeOrder(ProductOrder productOrder) { 
+        this.productOrder.remove(productOrder);
+        productOrder.setShoppingCart(null);
+        calculateTotalPrice();
+        return this;
+    }
+
+    public ShoppingCart orders(Set<ProductOrder> productOrders) { 
+        this.setProductOrder(productOrders);
+        calculateTotalPrice();
+        return this;
+    }
+    public ShoppingCart addCart(ProductOrder productOrder) { 
+        // Add productOrder to current ProductOrder
+        this.productOrder.add(productOrder);
+        // Update the shopping cart in the productOrder
+        productOrder.setShoppingCart(this);
+        // Recalculate 
+        calculateTotalPrice();
+        return this;
+    }
 }
