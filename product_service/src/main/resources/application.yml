@@ -58,3 +58,4 @@ logging:
             hibernate.type.descriptor.sql.BasicBinder: TRACE
             springframework.jdbc.core.JdbcTemplate: DEBUG
             springframework.jdbc.core.StatementCreatorUtils: TRACE
+    

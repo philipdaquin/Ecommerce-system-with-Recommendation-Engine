@@ -27,7 +27,7 @@ public class ProductCategoryService {
      * @param productCategory
      * @return the persisted entity
      */
-    public ProductCategory createProductCategory(ProductCategory productCategory) { 
+    public ProductCategory createCategory(ProductCategory productCategory) { 
         log.debug("Request to create new Product Category: {}", productCategory);
         return productCategoryRepository.save(productCategory);
     }
@@ -36,7 +36,7 @@ public class ProductCategoryService {
      * Deletes the product category by id
      * @param id of the product category
      */
-    public void deleteProductCategory(Long id) { 
+    public void deleteCategory(Long id) { 
         log.debug("Request to delete Product Category: {} ", id);
         productCategoryRepository.deleteById(id);
     }

@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+// import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,9 @@ import com.example.product_service.Security.AuthoritiesConstants;
 import com.example.product_service.model.Product;
 import com.example.product_service.repository.ProductRepository;
 import com.example.product_service.service.ProductService;
+
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping(value = {"/api"}, method = {
@@ -36,7 +39,7 @@ import lombok.AllArgsConstructor;
     RequestMethod.POST,
     RequestMethod.PUT
 })
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ProductResource {
     
     private static final String ENTITY = "product";
@@ -47,8 +50,6 @@ public class ProductResource {
     
     private final ProductRepository productRepository;
 
-    @Value("${application_name}")
-    private final String applicationName;
 
     /**
      * {@code Get /products/:id : get the "id" product}
@@ -57,7 +58,7 @@ public class ProductResource {
      * product, or with status {@code 404 (NOT FOUND)}
      */
     @GetMapping(value = "/products/{id}")
-    public ResponseEntity<Product> getProduct(@PathVariable Long id) { 
+    public ResponseEntity<Product> getProductResource(@PathVariable Long id) { 
         log.debug("Get Request to get Product: {}", id);
 
         Optional<Product> product = productService.getProduct(id);
@@ -76,7 +77,7 @@ public class ProductResource {
      */
     @DeleteMapping("/products/{id}")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) { 
+    public ResponseEntity<Void> deleteProductResource(@PathVariable Long id) { 
         log.debug("Receive request to delete Product: {}", id);
         
         productService.deleteProduct(id);
@@ -92,7 +93,7 @@ public class ProductResource {
      * @throws URISyntaxException if the location URI syntax is incorrect
      */
     @PutMapping("/products/{id}")
-    public ResponseEntity<Product> updateProduct(
+    public ResponseEntity<Product> partialUpdateProduct(
         @PathVariable(value = "id", required = false) final Long id,
         @Valid @RequestBody Product product
     ) throws URISyntaxException { 
@@ -113,9 +114,9 @@ public class ProductResource {
      * {@code 400 (Bad Request )} if the product has already an Id 
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
-    @PostMapping("/products")
+    @PostMapping("/products/")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public ResponseEntity<Product> createProduct(
+    public ResponseEntity<Product> createProductResource(
         @Valid @RequestBody Product product
     ) throws URISyntaxException {
         log.debug("Received request to create Product : {}", product);
@@ -123,7 +124,7 @@ public class ProductResource {
 
         return ResponseEntity
             .created(new URI("/api/products/" + result.getId()))
-            .header(applicationName, ENTITY, product.getId().toString())
+            // .header(applicationName, ENTITY, product.getId().toString())
             .body(result);
     }
 
@@ -132,8 +133,8 @@ public class ProductResource {
      * @param pageable the pagination information 
      * @return the {@link} ResponseEntity} with status {@code 200 (OK)} and the list of products
      */
-    @GetMapping("/product")
-    public ResponseEntity<List<Product>> getAllProducts(Pageable pageable) {
+    @GetMapping("/products/")
+    public ResponseEntity<List<Product>> getAllProductResource(Pageable pageable) {
         log.debug("Request to get a page of Product");
         Page<Product> page = productService.findAllProduct(pageable);
         return ResponseEntity
