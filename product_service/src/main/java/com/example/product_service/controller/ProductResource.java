@@ -1,6 +1,7 @@
 package com.example.product_service.controller;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -9,6 +10,8 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,7 +33,8 @@ import lombok.AllArgsConstructor;
 @RequestMapping(value = {"/api"}, method = {
     RequestMethod.GET, 
     RequestMethod.DELETE, 
-    RequestMethod.POST
+    RequestMethod.POST,
+    RequestMethod.PUT
 })
 @AllArgsConstructor
 public class ProductResource {
@@ -49,7 +53,7 @@ public class ProductResource {
     /**
      * {@code Get /products/:id : get the "id" product}
      * @param id the id of the product 
-     * @return return the }@link ResponseEntity} with status {@code 200 (OK)} and with body the 
+     * @return return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the 
      * product, or with status {@code 404 (NOT FOUND)}
      */
     @GetMapping(value = "/products/{id}")
@@ -121,5 +125,20 @@ public class ProductResource {
             .created(new URI("/api/products/" + result.getId()))
             .header(applicationName, ENTITY, product.getId().toString())
             .body(result);
+    }
+
+    /**
+     * {@code GET / product} : Get a list of products 
+     * @param pageable the pagination information 
+     * @return the {@link} ResponseEntity} with status {@code 200 (OK)} and the list of products
+     */
+    @GetMapping("/product")
+    public ResponseEntity<List<Product>> getAllProducts(Pageable pageable) {
+        log.debug("Request to get a page of Product");
+        Page<Product> page = productService.findAllProduct(pageable);
+        return ResponseEntity
+            .ok()
+            .header(ENTITY, page.toString())
+            .body(page.getContent());
     }
 }
