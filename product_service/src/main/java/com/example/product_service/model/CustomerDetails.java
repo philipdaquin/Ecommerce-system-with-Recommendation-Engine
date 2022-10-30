@@ -19,6 +19,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import com.example.product_service.model.UserInfo;
 import com.example.product_service.model.enumeration.Gender;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -64,7 +65,7 @@ public class CustomerDetails {
     @OneToOne(optional = false)
     @NotNull
     @JoinColumn(unique = true)
-    private User user;
+    private UserInfo userInfo;
 
     @OneToMany(mappedBy = "customerDetails")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)

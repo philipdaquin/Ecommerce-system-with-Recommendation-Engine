@@ -9,7 +9,6 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 // import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,8 +27,6 @@ import com.example.product_service.Security.AuthoritiesConstants;
 import com.example.product_service.model.Product;
 import com.example.product_service.repository.ProductRepository;
 import com.example.product_service.service.ProductService;
-
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @RestController
