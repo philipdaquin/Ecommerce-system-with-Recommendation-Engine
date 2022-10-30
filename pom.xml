@@ -19,7 +19,6 @@
 	<modules>
 		<module>accounts_service</module>
 		<module>product_service</module>
-		<module>shopping_cart</module>
 	</modules>
 
 	<packaging>pom</packaging>

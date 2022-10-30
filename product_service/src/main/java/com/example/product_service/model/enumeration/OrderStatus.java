@@ -1,4 +1,4 @@
-package com.example.shopping_cart.models.enumeration;
+package com.example.product_service.model.enumeration;
 
 /**
  * OrderStatus

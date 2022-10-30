@@ -1,4 +1,4 @@
-package com.example.shopping_cart.models;
+package com.example.product_service.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -23,11 +23,12 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.example.shopping_cart.models.enumeration.OrderStatus;
-import com.example.shopping_cart.models.enumeration.PaymentMethod;
+import com.example.product_service.model.enumeration.OrderStatus;
+import com.example.product_service.model.enumeration.PaymentMethod;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -35,6 +36,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Table(name = "shopping_cart")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class ShoppingCart implements Serializable {

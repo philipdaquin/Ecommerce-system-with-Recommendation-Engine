@@ -1,4 +1,4 @@
-package com.example.shopping_cart.service;
+package com.example.product_service.service;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.shopping_cart.models.ProductOrder;
-import com.example.shopping_cart.repository.ProductOrderRepository;
+import com.example.product_service.model.ProductOrder;
+import com.example.product_service.repository.ProductOrderRepository;
 
 import lombok.AllArgsConstructor;
 

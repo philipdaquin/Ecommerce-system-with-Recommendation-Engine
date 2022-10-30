@@ -1,4 +1,4 @@
-package com.example.shopping_cart.repository;
+package com.example.product_service.repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,8 +6,8 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.example.shopping_cart.models.ShoppingCart;
-import com.example.shopping_cart.models.enumeration.OrderStatus;
+import com.example.product_service.model.ShoppingCart;
+import com.example.product_service.model.enumeration.OrderStatus;
 
 @SuppressWarnings("unused")
 @Repository
