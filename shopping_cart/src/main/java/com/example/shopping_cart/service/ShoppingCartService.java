@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.shopping_cart.models.ShoppingCart;
+import com.example.shopping_cart.models.enumeration.OrderStatus;
 import com.example.shopping_cart.repository.ShoppingCartRepository;
 
 import lombok.AllArgsConstructor;
@@ -27,45 +28,58 @@ public class ShoppingCartService {
     
 
     /**
-     * 
-     * @param id
-     * @return
+     * Get a shopping cart by id 
+     * @param id of the shopping cart 
+     * @return the entity 
      */
+    @Transactional(readOnly = true)
     public Optional<ShoppingCart> findOne(Long id) { 
+        log.debug("Request to get a product by id: {}", id);
+
         return shoppingCartRepository.findById(id);
     }
 
     /**
-     * 
-     * @param id
+     * Delete the shopping cart by id 
+     * @param id of the shopping cart 
      */
     public void deleteOne(Long id) { 
+        log.debug("Request to delete a shopping cart by id: {}", id);
+
         shoppingCartRepository.deleteById(id);
     }
 
     /**
+     * Get all the shopping carts 
      * 
-     * @return
+     * @return the list of shopping carts 
      */
+    @Transactional(readOnly = true)
     public List<ShoppingCart> getAll() { 
+        log.debug("Request to get all product order");
+
         return shoppingCartRepository.findAll();
     }
 
     /**
-     * 
+     * Saves a shopping cart 
      * @param shoppingCart
-     * @return
+     * @return the persisted entity
      */
     public ShoppingCart save(ShoppingCart shoppingCart) { 
+        log.debug("Request to get all product order");
+
         return shoppingCartRepository.save(shoppingCart);
     }
 
     /**
-     * 
-     * @param shoppingCart
-     * @return
+     * Partially update a shopping cart  
+     * @param shoppingCart the entity to update partially 
+     * @return the persisted entity 
      */
     public Optional<ShoppingCart> partialUpdate(ShoppingCart shoppingCart) {
+        log.debug("Request to partially update a shopping cart: {} ", shoppingCart);
+
         return shoppingCartRepository.findById(shoppingCart.getId())
             .map(existingCart -> {
                 
@@ -80,4 +94,17 @@ public class ShoppingCartService {
             }).map(shoppingCartRepository::save);
     }
 
+    @Transactional(readOnly = true)
+    public List<ShoppingCart> findCartsByUser(final String user) { 
+        return shoppingCartRepository.findAllByCustomerDetailsUserLoginAndStatusNot(user, OrderStatus.OPEN);
+    }
+
+    // public ShoppingCart findActiveCartByUser(String user) { 
+    //     Optional<ShoppingCart> userCart = shoppingCartRepository.findFirstByCustomerDetailsUserLoginAndStatusOrderByIdAsc(user, OrderStatus.OPEN);
+    //     ShoppingCart activeCart = userCart.orElseGet(() -> { 
+    //         var customer = customer.
+    //     })
+    // }
+
+    
 }
