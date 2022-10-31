@@ -73,7 +73,7 @@ public class ShoppingCart implements Serializable {
     @OneToMany(mappedBy = "cart")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = "cart", allowSetters = true)
-    Set<ProductOrder> productOrder = new HashSet<>();
+    Set<ProductOrder> orders = new HashSet<>();
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -81,30 +81,30 @@ public class ShoppingCart implements Serializable {
     private CustomerDetails customerDetails;
 
     public void calculateTotalPrice() { 
-        if (this.productOrder != null) { 
-            this.setTotalPrice(this.productOrder
+        if (this.orders != null) { 
+            this.setTotalPrice(this.orders
                 .stream()
                 .map(ProductOrder::getTotalPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add));
         }
     }
     public ShoppingCart removeOrder(ProductOrder productOrder) { 
-        this.productOrder.remove(productOrder);
-        productOrder.setShoppingCart(null);
+        this.orders.remove(productOrder);
+        productOrder.setCart(null);
         calculateTotalPrice();
         return this;
     }
 
     public ShoppingCart orders(Set<ProductOrder> productOrders) { 
-        this.setProductOrder(productOrders);
+        this.setOrders(productOrders);
         calculateTotalPrice();
         return this;
     }
     public ShoppingCart addCart(ProductOrder productOrder) { 
         // Add productOrder to current ProductOrder
-        this.productOrder.add(productOrder);
+        this.orders.add(productOrder);
         // Update the shopping cart in the productOrder
-        productOrder.setShoppingCart(this);
+        productOrder.setCart(this);
         // Recalculate 
         calculateTotalPrice();
         return this;

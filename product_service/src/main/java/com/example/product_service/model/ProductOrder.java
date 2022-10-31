@@ -49,7 +49,7 @@ public class ProductOrder implements Serializable {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @NotNull
     @JsonIgnoreProperties(value = "orders", allowSetters = true)
-    private ShoppingCart shoppingCart;
+    private ShoppingCart cart;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @NotNull

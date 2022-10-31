@@ -141,7 +141,7 @@ public class ShoppingCartService {
         Product product = productService.getProduct(id).orElseThrow(() -> new EntityNotFoundException("Product Not Foundd!"));
         ProductOrder order = new ProductOrder();
         List<ProductOrder> orders = activeCart
-            .getProductOrder()
+            .getOrders()
             .stream()
             .filter(productorder -> productorder.getId().equals(id))
             .collect(Collectors.toList()); 
@@ -156,7 +156,7 @@ public class ShoppingCartService {
             order.setQuantity(1);
             order.setTotalPrice(product.getPricePerUnit());
             order.setProduct(product);
-            order.setShoppingCart(activeCart);
+            order.setCart(activeCart);
             activeCart.addCart(order);
         } else { 
             order = orders.get(0);
@@ -178,7 +178,7 @@ public class ShoppingCartService {
         ShoppingCart activeCart = findActiveCartByUser(user);
         // Get the list of products, find the item to be removed from the list and then update the list
         List<ProductOrder> orders = activeCart
-            .getProductOrder()
+            .getOrders()
             .stream()
             .filter(productOrder -> productOrder.getId().equals(productId))
             .collect(Collectors.toList());
