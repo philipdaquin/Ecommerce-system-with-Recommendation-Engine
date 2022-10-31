@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.apache.catalina.connector.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +14,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.example.product_service.Security.Utils;
 import com.example.product_service.model.ShoppingCart;
+import com.example.product_service.model.enumeration.OrderStatus;
 import com.example.product_service.repository.ShoppingCartRepository;
 import com.example.product_service.service.ShoppingCartService;
 
@@ -63,6 +67,23 @@ public class ShoppingCartResource {
     }   
 
     /**
+     * {@code DELETE /shop-cart/remove-order/:id} : Remove a product order from active from shopping cart of current user
+     * @param id
+     * @return
+     * @throws EntityNotFoundException
+     */
+    public ResponseEntity<ShoppingCart> removeShoppingCart(final Long id ) throws EntityNotFoundException { 
+        log.debug("Request to remove shopping cart!");
+
+        String user = Utils.getCurrentUser().orElseThrow(() -> new EntityNotFoundException("Unable to find the current user"));
+        ShoppingCart result = shoppingCartService.removeProductFromUser(id, user);
+        return ResponseEntity
+            .ok()
+            .header(ENTITY, id.toString())
+            .body(result);
+    }
+
+    /**
      * {@code PUT /shop-cart/add-product/:id} : Add a product o active shopping cart of current User
      * 
      * @param id the id of the product to add 
@@ -81,4 +102,48 @@ public class ShoppingCartResource {
             .header(ENTITY, result.getId().toString())
             .body(result);
     }   
+
+    /**
+     * 
+     * @return
+     * @throws EntityNotFoundException
+     */
+    public ResponseEntity<ShoppingCart> getActiveCartByUser() throws EntityNotFoundException { 
+        String user = Utils.getCurrentUser().orElseThrow(() -> new EntityNotFoundException("Unable to get User!"));
+        ShoppingCart result = shoppingCartService.findActiveCartByUser(user);
+        return ResponseEntity
+            .ok()
+            .header(ENTITY, result.getId().toString())
+            .body(result);
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public ResponseEntity<List<ShoppingCart>> getAllCartsByUser() { 
+        String user = Utils.getCurrentUser().orElseThrow(() -> new EntityNotFoundException("Unable to get User!"));
+        List<ShoppingCart> result = shoppingCartService.findCartsByUser(user);
+
+        return ResponseEntity
+            .ok()
+            .body(result);
+    }
+
+    public ResponseEntity<ShoppingCart> closeShoppingCart(
+        @RequestParam String paymentType, 
+        @RequestParam String paymentRef,
+        @RequestParam OrderStatus status
+    ) throws EntityNotFoundException{
+        String user = Utils.getCurrentUser().orElseThrow(() -> new EntityNotFoundException("Unable to find user"));
+
+        ShoppingCart result = shoppingCartService.updateCartWithPaymentByUserName(user, paymentType, paymentRef, status);
+        return ResponseEntity
+            .ok()
+            .header(ENTITY, result.getId().toString())
+            .body(result);
+    }
+
+
+
 }

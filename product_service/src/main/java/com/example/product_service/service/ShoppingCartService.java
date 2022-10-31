@@ -202,7 +202,7 @@ public class ShoppingCartService {
      */
     public ShoppingCart updateCartWithPaymentByUserName(
         final String user, 
-        final PaymentMethod paymentMethod, 
+        final String paymentMethod, 
         final String paymentRef,
         final OrderStatus status
     ) { 
@@ -220,7 +220,7 @@ public class ShoppingCartService {
      */
     public ShoppingCart updateCartWithPaymentByCartId(
         final Long id,
-        final PaymentMethod paymentMethod, 
+        final String paymentMethod, 
         final String paymentRef,
         final OrderStatus status
     ) {
@@ -239,13 +239,13 @@ public class ShoppingCartService {
      */
     public ShoppingCart updateCart(
         ShoppingCart activeCart,
-        final PaymentMethod paymentMethod, 
+        final String paymentMethod, 
         final String paymentRef,
         final OrderStatus status
     ) {
         activeCart.setPaymentReference(paymentRef);
         activeCart.setOrderStatus(status);
-        activeCart.setPaymentMethod(paymentMethod);
+        activeCart.setPaymentMethod(PaymentMethod.valueOf(paymentMethod));
         return activeCart;
     }
 
