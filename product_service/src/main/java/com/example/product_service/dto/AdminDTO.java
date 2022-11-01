@@ -1,24 +1,36 @@
 package com.example.product_service.dto;
 
 import java.time.Instant;
+import java.util.Set;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+
+import com.example.product_service.config.Constant;
+import com.example.product_service.model.enumeration.Gender;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Public Attributes reepresenting the user
+ *  A DTO representing a USER, with his authorities 
  */
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class UserDTO { 
+public class AdminDTO { 
     
     private Long id;
 
+    /*
+     * Non-nullable and needs to have 1 whitespace 
+     */
+    @NotBlank
+    @Pattern(regexp = Constant.LOGIN_REGEX)
+    @Size(min = 1, max = 50)
     private String userLogin;
     
     @Size(max = 40)
@@ -49,4 +61,19 @@ public class UserDTO {
 
     private boolean activated = false;
 
+    private Gender gender;
+
+    private String addressLine1;
+
+    private String addressLine2;
+
+    private String city;
+
+    private String country;
+
+    private String lastModifiedBy;
+    
+    private Instant lastModifiedDate;
+
+    private Set<String> authorities; 
 }
