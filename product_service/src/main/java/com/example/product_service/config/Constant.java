@@ -1,5 +1,7 @@
 package com.example.product_service.config;
 
+import org.springframework.context.annotation.Configuration;
+
 import lombok.NoArgsConstructor;
 
 /**
@@ -7,6 +9,7 @@ import lombok.NoArgsConstructor;
  * - will generate a constructor with no parameters 
  */
 @NoArgsConstructor
+@Configuration
 public class Constant {
     /**
      * Public makes it accessible across other classes
