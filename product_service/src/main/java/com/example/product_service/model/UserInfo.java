@@ -2,12 +2,16 @@ package com.example.product_service.model;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -18,6 +22,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.ManyToAny;
 
 import com.example.product_service.config.Constant;
 import com.example.product_service.model.enumeration.Gender;
@@ -42,7 +47,6 @@ import lombok.NoArgsConstructor;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class UserInfo implements Serializable {
 
-    // PK userId
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
@@ -52,7 +56,7 @@ public class UserInfo implements Serializable {
     @Pattern(regexp = Constant.LOGIN_REGEX)
     @Size(min = 1, max = 50)
     @Column(name = "username", length = 50)
-    private String userName;
+    private String userLogin;
     
     @NotBlank(message = "User must have valid first name")
     @Size(max = 50)
@@ -78,12 +82,32 @@ public class UserInfo implements Serializable {
     private String password;
 
     @Column(name = "createdAt")
-    private Instant createdAt;
+    private Instant createdAt = null;
 
     @NotNull
     @Column(nullable = false)
     private boolean enabled = false;
 
+    @Size(min = 2, max = 10)
+    @Column(name = "language", length = 10)
+    private String language;
+
+
+    @Column(name ="imageurl")
+    private String imageUrl;
+
+    @Size(max = 20)
+    @JsonIgnore
+    @Column(name ="activation_key")
+    private String activationKey;
+
+    @Size(max = 20)
+    @JsonIgnore
+    @Column(name ="image_url")
+    private String resetKey;
+
     @NotNull
-    private Gender gender;
+    @Column(nullable = false)
+    private boolean activated = false;
+
 }

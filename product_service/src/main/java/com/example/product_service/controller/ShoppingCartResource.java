@@ -104,6 +104,7 @@ public class ShoppingCartResource {
     }   
 
     /**
+     * {@code /shop-cart/current-user} : get the active shopping by the current user
      * 
      * @return
      * @throws EntityNotFoundException
@@ -130,6 +131,14 @@ public class ShoppingCartResource {
             .body(result);
     }
 
+    /**
+     * 
+     * @param paymentType
+     * @param paymentRef
+     * @param status
+     * @return
+     * @throws EntityNotFoundException
+     */
     public ResponseEntity<ShoppingCart> closeShoppingCart(
         @RequestParam String paymentType, 
         @RequestParam String paymentRef,

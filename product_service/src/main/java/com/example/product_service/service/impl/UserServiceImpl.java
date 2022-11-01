@@ -28,7 +28,6 @@ public class UserServiceImpl implements UserService {
         var new_user = new UserInfo();
         new_user.setFirstName(userDTO.getFirstName());
         new_user.setLastName(userDTO.getLastName());
-        new_user.setUserName(userDTO.getUserName());
         new_user.setEmail(userDTO.getEmail());
         
         String password = passwordEncoder.encode(userDTO.getPassword());
