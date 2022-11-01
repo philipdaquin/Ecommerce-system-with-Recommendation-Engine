@@ -22,12 +22,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.example.product_service.model.ProductCategory;
 import com.example.product_service.repository.ProductCategoryRepository;
 import com.example.product_service.service.ProductCategoryService;
-
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @RestController

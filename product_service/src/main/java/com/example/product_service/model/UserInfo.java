@@ -2,16 +2,11 @@ package com.example.product_service.model;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -19,15 +14,10 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.ManyToAny;
-
 import com.example.product_service.config.Constant;
-import com.example.product_service.model.enumeration.Gender;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,7 +25,7 @@ import lombok.NoArgsConstructor;
 /**
  * Serializable - When you want to be able to convert an intance of a class into a series of bytes
  * Data - a shortcut for ToString, Getter, Setter, RequiredArgsConstructor 
- * Entityy -  An entity representes a class stored in a database, every instance of an entity 
+ * Entity -  An entity representes a class stored in a database, every instance of an entity 
  *  represents a row in the table
  */
 
