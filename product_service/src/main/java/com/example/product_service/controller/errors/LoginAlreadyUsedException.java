@@ -2,9 +2,12 @@ package com.example.product_service.controller.errors;
 
 public class LoginAlreadyUsedException extends BadRequestAlertException {
 
-    public LoginAlreadyUsedException(String entityName, String errorKey) {
-        super(entityName, errorKey);
-        //TODO Auto-generated constructor stub
+    public LoginAlreadyUsedException() {
+        super(
+            ErrorConstants.LOGIN_ALREADY_USED_TYPE, 
+            "Login name is used", 
+            "accountService", 
+            "userExists"
+        );
     }
-    
 }

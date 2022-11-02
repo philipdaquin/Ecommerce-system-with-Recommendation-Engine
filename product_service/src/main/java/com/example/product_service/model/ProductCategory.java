@@ -1,5 +1,6 @@
 package com.example.product_service.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,7 +26,7 @@ import lombok.Data;
 @Entity
 @Table(name = "product_category")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class ProductCategory {
+public class ProductCategory implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

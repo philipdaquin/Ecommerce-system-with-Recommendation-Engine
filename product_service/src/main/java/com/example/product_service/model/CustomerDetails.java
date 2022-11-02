@@ -1,5 +1,6 @@
 package com.example.product_service.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.Column;
@@ -28,7 +29,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Table(name = "customer_details")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class CustomerDetails {
+public class CustomerDetails implements Serializable  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
