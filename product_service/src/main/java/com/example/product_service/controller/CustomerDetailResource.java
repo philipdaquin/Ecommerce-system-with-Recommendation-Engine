@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -112,11 +113,17 @@ public class CustomerDetailResource {
     }
 
     /**
+     * @{code PATCH /customer-details/:id} : Partial updates given fields of an existing customerdetails, field will 
+     * ignore any null values 
      * 
-     * @param id
-     * @param customerDetails
+     * @param id of the customerDetails to save
+     * @param customerDetails the customerDetails to save 
      * @return
-     * @throws URISyntaxException
+     * 
+     * {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated customerDetails 
+     * 
+     * 
+     * @throws URISyntaxException if the Location URI syntax is incorrect 
      */
     @PatchMapping(value = "/customer-details/{id}", consumes = "application/merge-patch+json")
     public ResponseEntity<CustomerDetails> partialUpdateCustomerDetails(
@@ -135,4 +142,32 @@ public class CustomerDetailResource {
             .header(ENTITY, id.toString())
             .body(result.get());
     }
+
+    /**
+     * @{code PUT /customer-details/:id} : updates an exiting customerDetails
+     * 
+     * @param id the id of the CustomerDetails to save
+     * @param customerDetails the customerDetails to update
+     * @return 
+     * @throws URISyntaxException if the location URI syntax is incorrect
+     */
+    @PutMapping("/customer-details/{id}")
+    public ResponseEntity<CustomerDetails> updateCustomerDetails(
+        @PathVariable(value = "id", required = false) final Long id,
+        @Valid @RequestBody CustomerDetails customerDetails
+    ) throws URISyntaxException {
+        log.debug("Request to update Customer Details: {}", customerDetails);
+ 
+        if (customerDetails.getId() == null) throw new URISyntaxException("", "");
+        if (!Objects.equals(id, customerDetails.getId())) throw new URISyntaxException("", "");
+        if (!customerDetailsRepository.existsById(id)) throw new URISyntaxException("", "");
+
+        CustomerDetails result = customerDetailsService.createCustomerDetails(customerDetails);
+        return ResponseEntity
+            .ok()
+            .header(ENTITY, result.getId().toString())
+            .body(result);
+
+    }
+
 }
