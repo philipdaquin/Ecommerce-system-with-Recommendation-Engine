@@ -82,7 +82,7 @@ public class ProductResourceTest {
         product.setItemSize(UPDATED_ITEM_SIZE);
         product.setContentType(UPDATED_IMAGE_CONTENT_TYPE);
 
-        ProductCategory productCategory = ProductCategoryResource.createUpdatedEntity(em);
+        ProductCategory productCategory = ProductCategoryResouceIT.updateProductCategory(eManager);
         
         product.setProductCategory(productCategory);
 

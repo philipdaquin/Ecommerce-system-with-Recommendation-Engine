@@ -1,19 +1,29 @@
 package com.example.product_service.service;
 
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.persistence.EntityManager;
 
+import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-
+import org.springframework.test.web.servlet.RequestBuilder;
+import org.springframework.transaction.annotation.Transactional;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import com.example.product_service.IntegrationTest;
+import com.example.product_service.model.Product;
 import com.example.product_service.model.ProductCategory;
 import com.example.product_service.repository.ProductCategoryRepository;
+import com.example.product_service.repository.ProductRepository;
 
 @IntegrationTest
 @AutoConfigureMockMvc
@@ -44,6 +54,9 @@ public class ProductCategoryResouceIT {
 
     private ProductCategory productCategory;
 
+    private RequestBuilder requestBuilder;
+
+    private ProductRepository productRepository;
 
     /**
      * 
@@ -76,5 +89,22 @@ public class ProductCategoryResouceIT {
         productCategory = createProductCategory(entityManager);
     }
     
+    @Test
+    @Transactional
+    void createProductCategory() throws Exception {
+        // the number of elements in the list
+        int databaseSize = productCategoryRepository.findAll().size();
+
+
+        restMockMvc.perform(
+            post(ENTITY_API_URL)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(TestUtils.convertObjectToJsonBytes(productCategory))
+        ).andExpect(status().isCreated());
+
+        List<Product> productList = productRepository.findAll();
+        Product product = productList.get(databaseSize - 1);
+    }
+
 
 }
