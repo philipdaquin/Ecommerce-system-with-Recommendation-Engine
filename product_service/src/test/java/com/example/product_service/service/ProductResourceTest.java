@@ -12,7 +12,9 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.product_service.IntegrationTest;
+import com.example.product_service.controller.ProductCategoryResource;
 import com.example.product_service.model.Product;
+import com.example.product_service.model.ProductCategory;
 import com.example.product_service.model.enumeration.Size;
 import com.example.product_service.repository.ProductRepository;
 
@@ -57,15 +59,33 @@ public class ProductResourceTest {
 
     private Product product;
 
+    /**
+     * Creates a product entity for this test
+     * @param eManager
+     * @return
+     */
     public static Product createProductEntity(EntityManager eManager){ 
         Product product = new Product();
         product.setName(DEFAULT_NAME);
         product.setDescription(DEFAULT_DESCRIPTION);
         product.setPricePerUnit(DEFAULT_PRICE);
         product.setItemSize(DEFAULT_ITEM_SIZE);
+        product.setContentType(DEFAULT_IMAGE_CONTENT_TYPE);
+        return product;
+    }
+
+    public static Product updateProductEntity(EntityManager eManager) { 
+        Product product = new Product();
+        product.setName(UPDATED_NAME);
+        product.setDescription(UPDATED_DESCRIPTION);
+        product.setPricePerUnit(UPDATED_PRICE);
+        product.setItemSize(UPDATED_ITEM_SIZE);
+        product.setContentType(UPDATED_IMAGE_CONTENT_TYPE);
+
+        ProductCategory productCategory = ProductCategoryResource.createUpdatedEntity(em);
+        
+        product.setProductCategory(productCategory);
 
         return product;
-
     }
-    
 }
