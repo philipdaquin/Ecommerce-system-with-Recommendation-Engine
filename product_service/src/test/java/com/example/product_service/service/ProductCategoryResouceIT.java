@@ -1,13 +1,10 @@
 package com.example.product_service.service;
-
-import static org.mockito.Mockito.CALLS_REAL_METHODS;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
-
 import javax.persistence.EntityManager;
-
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +12,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.transaction.annotation.Transactional;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -42,7 +38,6 @@ public class ProductCategoryResouceIT {
     private static Random random = new Random();
     private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
 
-
     @Autowired
     private ProductCategoryRepository productCategoryRepository;
 
@@ -54,7 +49,6 @@ public class ProductCategoryResouceIT {
 
     private ProductCategory productCategory;
 
-    private RequestBuilder requestBuilder;
 
     private ProductRepository productRepository;
 
@@ -89,6 +83,10 @@ public class ProductCategoryResouceIT {
         productCategory = createProductCategory(entityManager);
     }
     
+    /**
+     * 
+     * @throws Exception
+     */
     @Test
     @Transactional
     void createProductCategory() throws Exception {
@@ -103,8 +101,109 @@ public class ProductCategoryResouceIT {
         ).andExpect(status().isCreated());
 
         List<Product> productList = productRepository.findAll();
-        Product product = productList.get(databaseSize - 1);
+        
+        assertEquals(databaseSize, productList.size() + 1);
+        
+        Product testProduct = productList.get(databaseSize - 1);
+
+        assertThat(testProduct.getName()).isEqualTo(DEFAULT_NAME);
+        assertThat(testProduct.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
     }
 
+    /**
+     * 
+     * @throws Exception
+     */
+    @Test
+    @Transactional
+    void deleteProductCategory() throws Exception { 
+        productCategoryRepository.saveAndFlush(productCategory);
+
+        int databaseSize = productCategoryRepository.findAll().size();
+        restMockMvc.perform(
+            delete(ENTITY_API_URL_ID, productCategory.getId())
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNoContent());
+
+        List<ProductCategory> productCategoryList = productCategoryRepository.findAll();
+        assertThat(productCategoryList.size()).isEqualTo(databaseSize - 1);
+    }
+    /**
+     * 
+     * @throws Exception
+     */
+    @Test
+    @Transactional
+    void putNewProductCategory() throws Exception  { 
+        // initiliase the database
+        productCategoryRepository.saveAndFlush(productCategory);
+        int databaseSizeBeforeUpdate = productCategoryRepository.findAll().size();
+
+        // Updte the product category 
+        ProductCategory updatedProductCategory = productCategoryRepository
+            .findById(productCategory.getId())
+            .get();
+        
+        // Disconnect from session so that the updates on updatedProductCategory are not directly saved in db
+        entityManager.detach(updatedProductCategory);
+
+        updatedProductCategory.setName(UPDATED_NAME);
+        updatedProductCategory.setDescription(UPDATED_DESCRIPTION);
+
+
+        restMockMvc.perform(
+            put(ENTITY_API_URL, updatedProductCategory.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(TestUtils.convertObjectToJsonBytes(updatedProductCategory))
+        ).andExpect(status().isOk());
+
+        List<ProductCategory> productCategorieslist = productCategoryRepository.findAll();
+        assertThat(productCategorieslist).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    /**
+     * Test partial updates for productCategory
+     * @throws Exception
+     */
+    @Test
+    @Transactional
+    void partialUpdateProductCategoryWithPatch() throws Exception { 
+        // intialise the database
+        productCategoryRepository.saveAndFlush(productCategory);
+
+        int databaseSizeBeforeUpdate = productCategoryRepository.findAll().size();
+
+        ProductCategory updatedProductCategory = new ProductCategory();
+        updatedProductCategory.setId(productCategory.getId());
+
+        restMockMvc.perform(
+            patch(ENTITY_API_URL, updatedProductCategory.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtils.convertObjectToJsonBytes(updatedProductCategory))
+        ).andExpect(status().isOk());
+
+        List<ProductCategory> productCategoryList = productCategoryRepository.findAll();
+        assertThat(productCategoryList).hasSize(databaseSizeBeforeUpdate);
+
+        ProductCategory testproductcategory = productCategoryList.get(databaseSizeBeforeUpdate - 1);
+
+        assertThat(testproductcategory.getName()).isEqualTo(DEFAULT_NAME);
+
+        assertThat(testproductcategory.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
+    }
+
+    /**
+     * 
+     * @throws Exception
+     */
+    @Test
+    @Transactional 
+    void getNonExistentProductCategory() throws Exception  { 
+        restMockMvc.perform(
+            get(ENTITY_API_URL_ID, Long.MAX_VALUE))
+            .andExpect(status().isNotFound());
+    }
+
+   
 
 }
