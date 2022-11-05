@@ -39,7 +39,7 @@ spring:
   datasource:
     username: postgres
     password: password
-    url: jdbc:postgresql://localhost:5432/java_product_service
+    url: jdbc:postgresql://localhost:5432/java_commerce_sample
   jpa:
     generate-ddl: true
     hibernate:

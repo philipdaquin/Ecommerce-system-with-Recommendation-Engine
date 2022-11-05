@@ -13,6 +13,6 @@ import com.example.product_service.model.CustomerDetails;
 @Repository
 public interface CustomerDetailsRepository extends JpaRepository<CustomerDetails, Long> {
 
-    Optional<CustomerDetails> findOneByUserLogin(String user);
+    Optional<CustomerDetails> findOneByUserInfo(String user);
     
 }

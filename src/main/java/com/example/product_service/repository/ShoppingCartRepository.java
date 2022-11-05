@@ -13,9 +13,9 @@ import com.example.product_service.model.enumeration.OrderStatus;
 @Repository
 public interface ShoppingCartRepository extends JpaRepository<ShoppingCart, Long> {
     
-    Optional<ShoppingCart> findFirstByCustomerDetailsUserLoginAndStatusOrderByIdAsc(String login, OrderStatus orderStatus);
+    Optional<ShoppingCart> findFirstByCustomerDetailsUserInfoAndStatusOrderByIdAsc(String login, OrderStatus orderStatus);
     
-    List<ShoppingCart> findAllByCustomerDetailsUserLoginAndStatusNot(String user, OrderStatus orderStatus);
+    List<ShoppingCart> findAllByCustomerDetailsUserInfoAndStatusNot(String user, OrderStatus orderStatus);
     
     Optional<ShoppingCart> findOneByPaymentModificationReference(String paymentref);
 

@@ -24,10 +24,11 @@ import com.example.product_service.repository.CustomerDetailsRepository;
 import com.example.product_service.repository.ShoppingCartRepository;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ShoppingCartService {
     
     private final Logger log = LoggerFactory.getLogger(ShoppingCartService.class);
@@ -109,14 +110,14 @@ public class ShoppingCartService {
 
     @Transactional(readOnly = true)
     public List<ShoppingCart> findCartsByUser(final String user) { 
-        return shoppingCartRepository.findAllByCustomerDetailsUserLoginAndStatusNot(user, OrderStatus.OPEN);
+        return shoppingCartRepository.findAllByCustomerDetailsUserInfoAndStatusNot(user, OrderStatus.OPEN);
     }
 
     public ShoppingCart findActiveCartByUser(String user) { 
-        Optional<ShoppingCart> userCart = shoppingCartRepository.findFirstByCustomerDetailsUserLoginAndStatusOrderByIdAsc(user, OrderStatus.OPEN);
+        Optional<ShoppingCart> userCart = shoppingCartRepository.findFirstByCustomerDetailsUserInfoAndStatusOrderByIdAsc(user, OrderStatus.OPEN);
         // Get the user cart or create a new one with default values 
         ShoppingCart activeCart = userCart.orElseGet(() -> { 
-            Optional<CustomerDetails> customer = customerDetailsRepository.findOneByUserLogin(user);
+            Optional<CustomerDetails> customer = customerDetailsRepository.findOneByUserInfo(user);
             ShoppingCart cart = new ShoppingCart();
                 cart.setOrderStatus(OrderStatus.OPEN);
                 cart.setPaymentMethod(PaymentMethod.CREDIT_CARD);

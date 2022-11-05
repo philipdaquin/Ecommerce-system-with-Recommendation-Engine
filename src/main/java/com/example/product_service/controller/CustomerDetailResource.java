@@ -29,10 +29,11 @@ import com.example.product_service.repository.CustomerDetailsRepository;
 import com.example.product_service.service.CustomerDetailsService;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CustomerDetailResource {
     
     private Logger log = LoggerFactory.getLogger(CustomerDetailResource.class);
