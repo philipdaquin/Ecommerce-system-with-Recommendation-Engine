@@ -1,0 +1,96 @@
+application {
+    config {
+        baseName product_service
+        packageName com.example.product_service
+        buildTool maven
+    }
+}
+
+
+enum Size { 
+    S, M, XL, XXL
+}
+
+entity Product {
+    name String required
+    description String 
+    price BigDecimal required min(0)
+    itemSize Size required
+    image ImageBlob
+}
+
+entity ProductCategory { 
+    name String required
+    description String
+}
+
+enum Gender { 
+    MALE,
+    FEMALE,
+    OTHER
+}
+entity CustomerDetails { 
+    gender Gender
+    phone String
+    addressLine1 String
+    addressLine2 String
+    city String
+    country String 
+}
+
+enum OrderStatus {
+    REFUND_INITIATED,
+    REFUND_FAILED,
+    PAID,
+    PENDING,
+    OPEN,
+    CANCELLED,
+    REFUNDED
+}
+
+enum PaymentMethod {
+    CREDIT_CARD(scheme),
+    IDEAL(ideal)
+}
+entity ShoppingCart { 
+    status OrderStatus required
+    paymentMethod PaymentMethod required
+    paymentReference String
+    totalPrice BigDecimal required min(0)
+    paymentModificationReference String
+    placedDate Instant required
+}
+
+entity ProductOrder { 
+    quantity Integer required min(0)
+    totalPrice BigDecimal required min(0)
+}
+
+
+/**
+ * Many to one relationship.
+ */
+relationship ManyToOne {
+    ProductOrder{product(name)} to Product
+}
+
+/**
+ * One to many relationship.
+ */
+relationship OneToMany {
+    // Add a field cart in CustomerDetails
+    CustomerDetails{carts} to ShoppingCart{customerDetails required}
+    
+    // Add a field order in Shopping Cart
+    ShoppingCart{orders} to ProductOrder{cart required}
+    
+    // Add a field order in ProductCategory 
+    ProductCategory{products} to Product{ProductCategory(name) required}
+}
+
+relationship OneToOne { 
+    CustomerDetails{user(login) required} to User
+}
+
+service* with serviceClass
+paginate Product, CustomerDetails, ProductCategory with pagination
