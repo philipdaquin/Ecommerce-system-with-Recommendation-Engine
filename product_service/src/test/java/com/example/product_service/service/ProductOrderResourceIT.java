@@ -110,7 +110,7 @@ public class ProductOrderResourceIT {
 
         ShoppingCart shoppingCart;
         if (TestUtils.findAll(entityManager, ShoppingCart.class).isEmpty()) { 
-            shoppingCart = ShoppingCartTest.createUpdatedShoppingCartEntity(entityManager);
+            shoppingCart = ShoppingCartTest.createShoppingCartEntity(entityManager);
             entityManager.persist(shoppingCart);
             entityManager.flush();
         } else { 
@@ -172,7 +172,57 @@ public class ProductOrderResourceIT {
         ).andExpect(status().isBadRequest());
 
         // Check if that item has been added in the database
-        var productList = productOrderRepository.findAll();
+        List<ProductOrder> productList = productOrderRepository.findAll();
         assertThat(productList).hasSize(databaseSize);
+    }
+
+    @Test
+    @Transactional
+    void checkQuantityIsRequired() throws Exception { 
+        int databaseSize = productOrderRepository.findAll().size();
+
+        productOrder.setQuantity(null);
+
+        restMockMvc.perform(
+            post(ENTITY_API_URL)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(TestUtils.convertObjectToJsonBytes(productOrder))
+        ).andExpect(status().isBadRequest());
+
+        // Check if that item has been added in the database
+        List<ProductOrder> productList = productOrderRepository.findAll();
+        assertThat(productList).hasSize(databaseSize);
+    }
+
+    @Test
+    @Transactional
+    void putNewProductOrder() throws Exception { 
+        // intialise the database
+        productOrderRepository.saveAndFlush(productOrder);
+
+        int databaseSize = productOrderRepository.findAll().size();
+
+        // Update the productOrder 
+        ProductOrder updatedProductOrder = productOrderRepository.findById(productOrder.getId()).get();
+        
+        // Disconnect from session so that the updates 
+        entityManager.detach(updatedProductOrder);
+
+        updatedProductOrder.setQuantity(UPDATED_QUANTITY);
+        updatedProductOrder.setTotalPrice(UPDATED_TOTALPRICE);
+
+        restMockMvc.perform(
+            post(ENTITY_API_URL_ID, updatedProductOrder.getId())
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(TestUtils.convertObjectToJsonBytes(updatedProductOrder))
+        ).andExpect(status().isOk());
+
+        List<ProductOrder> productOrderList = productOrderRepository.findAll();
+
+        assertThat(productOrderList).hasSize(databaseSize);
+
+        ProductOrder testProductOrder = productOrderList.get(productOrderList.size() - 1);
+        assertThat(testProductOrder.getQuantity()).isEqualTo(UPDATED_QUANTITY);
+        assertThat(testProductOrder.getTotalPrice()).isEqualTo(UPDATED_TOTALPRICE);
     }
 }
