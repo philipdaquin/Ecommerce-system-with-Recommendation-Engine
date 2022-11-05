@@ -49,7 +49,6 @@ public class ProductCategoryResouceIT {
 
     private ProductCategory productCategory;
 
-
     private ProductRepository productRepository;
 
     /**
