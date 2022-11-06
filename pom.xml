@@ -18,6 +18,19 @@
 		<jjwt.version>0.9.0</jjwt.version>
 	</properties>
 	<dependencies>
+
+	<!-- Liquibase  -->
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+			<version>4.17.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-cdi</artifactId>
+			<version>4.17.2</version>
+		</dependency>
+
 	<!-- REST API documentation -->
 		<dependency>
             <groupId>io.springfox</groupId>

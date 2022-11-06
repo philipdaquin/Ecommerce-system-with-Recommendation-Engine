@@ -23,12 +23,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.example.product_service.model.CustomerDetails;
 import com.example.product_service.repository.CustomerDetailsRepository;
 import com.example.product_service.service.CustomerDetailsService;
-
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @RestController
