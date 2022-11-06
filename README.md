@@ -13,7 +13,3 @@ Spring MVC Microservices
 
 # Swagger UI
 ![auth](https://user-images.githubusercontent.com/85416532/200148215-47fd4de1-0314-4454-ad0e-a55572ac7e67.png)
-
-## Development
--
-`mvn compile`
