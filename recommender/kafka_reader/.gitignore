@@ -1,0 +1,7 @@
+/.metals
+/.vscode
+/.bloop
+
+*.semanticdb
+./target 
+./src/main/java/com/example/*.class/

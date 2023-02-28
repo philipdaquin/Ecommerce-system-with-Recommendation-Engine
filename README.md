@@ -3,6 +3,8 @@
 Spring MVC Microservices
 - Java
 - Spring
+- Apache Spark 
+- Scala
 - Swagger UI
 - Junit 
 - JWT

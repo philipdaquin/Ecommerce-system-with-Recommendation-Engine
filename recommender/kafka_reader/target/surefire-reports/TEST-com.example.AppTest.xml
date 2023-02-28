@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.example.AppTest" time="0.038" tests="1" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="awt.toolkit" value="sun.awt.X11.XToolkit"/>
+    <property name="java.specification.version" value="11"/>
+    <property name="sun.cpu.isalist" value=""/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.class.path" value="/home/philip/js-programming/product_recommendation/kafka_reader/target/test-classes:/home/philip/js-programming/product_recommendation/kafka_reader/target/classes:/home/philip/.m2/repository/junit/junit/4.11/junit-4.11.jar:/home/philip/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/home/philip/.m2/repository/org/postgresql/postgresql/42.5.4/postgresql-42.5.4.jar:/home/philip/.m2/repository/org/checkerframework/checker-qual/3.5.0/checker-qual-3.5.0.jar:/home/philip/.m2/repository/org/apache/kafka/kafka-clients/3.4.0/kafka-clients-3.4.0.jar:/home/philip/.m2/repository/com/github/luben/zstd-jni/1.5.2-1/zstd-jni-1.5.2-1.jar:/home/philip/.m2/repository/org/lz4/lz4-java/1.8.0/lz4-java-1.8.0.jar:/home/philip/.m2/repository/org/xerial/snappy/snappy-java/1.1.8.4/snappy-java-1.1.8.4.jar:/home/philip/.m2/repository/org/slf4j/slf4j-api/1.7.30/slf4j-api-1.7.30.jar:/home/philip/.m2/repository/org/slf4j/slf4j-simple/1.7.30/slf4j-simple-1.7.30.jar:/home/philip/.m2/repository/com/google/code/gson/gson/2.10.1/gson-2.10.1.jar:/home/philip/.m2/repository/org/apache/kafka/kafka-streams/2.7.0/kafka-streams-2.7.0.jar:/home/philip/.m2/repository/org/apache/kafka/connect-json/2.7.0/connect-json-2.7.0.jar:/home/philip/.m2/repository/org/apache/kafka/connect-api/2.7.0/connect-api-2.7.0.jar:/home/philip/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.10.5.1/jackson-databind-2.10.5.1.jar:/home/philip/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.10.5/jackson-annotations-2.10.5.jar:/home/philip/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.10.5/jackson-core-2.10.5.jar:/home/philip/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.10.5/jackson-datatype-jdk8-2.10.5.jar:/home/philip/.m2/repository/org/rocksdb/rocksdbjni/5.18.4/rocksdbjni-5.18.4.jar:/home/philip/.m2/repository/org/projectlombok/lombok/1.18.26/lombok-1.18.26.jar:"/>
+    <property name="java.vm.vendor" value="Ubuntu"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.vendor.url" value="https://ubuntu.com/"/>
+    <property name="user.timezone" value=""/>
+    <property name="java.vm.specification.version" value="11"/>
+    <property name="os.name" value="Linux"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="sun.boot.library.path" value="/usr/lib/jvm/java-11-openjdk-amd64/lib"/>
+    <property name="sun.java.command" value="/home/philip/js-programming/product_recommendation/kafka_reader/target/surefire/surefirebooter14549296826042660296.jar /home/philip/js-programming/product_recommendation/kafka_reader/target/surefire 2023-02-28T07-03-37_878-jvmRun1 surefire14415925467305420124tmp surefire_014876983791870682869tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="surefire.test.class.path" value="/home/philip/js-programming/product_recommendation/kafka_reader/target/test-classes:/home/philip/js-programming/product_recommendation/kafka_reader/target/classes:/home/philip/.m2/repository/junit/junit/4.11/junit-4.11.jar:/home/philip/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/home/philip/.m2/repository/org/postgresql/postgresql/42.5.4/postgresql-42.5.4.jar:/home/philip/.m2/repository/org/checkerframework/checker-qual/3.5.0/checker-qual-3.5.0.jar:/home/philip/.m2/repository/org/apache/kafka/kafka-clients/3.4.0/kafka-clients-3.4.0.jar:/home/philip/.m2/repository/com/github/luben/zstd-jni/1.5.2-1/zstd-jni-1.5.2-1.jar:/home/philip/.m2/repository/org/lz4/lz4-java/1.8.0/lz4-java-1.8.0.jar:/home/philip/.m2/repository/org/xerial/snappy/snappy-java/1.1.8.4/snappy-java-1.1.8.4.jar:/home/philip/.m2/repository/org/slf4j/slf4j-api/1.7.30/slf4j-api-1.7.30.jar:/home/philip/.m2/repository/org/slf4j/slf4j-simple/1.7.30/slf4j-simple-1.7.30.jar:/home/philip/.m2/repository/com/google/code/gson/gson/2.10.1/gson-2.10.1.jar:/home/philip/.m2/repository/org/apache/kafka/kafka-streams/2.7.0/kafka-streams-2.7.0.jar:/home/philip/.m2/repository/org/apache/kafka/connect-json/2.7.0/connect-json-2.7.0.jar:/home/philip/.m2/repository/org/apache/kafka/connect-api/2.7.0/connect-api-2.7.0.jar:/home/philip/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.10.5.1/jackson-databind-2.10.5.1.jar:/home/philip/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.10.5/jackson-annotations-2.10.5.jar:/home/philip/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.10.5/jackson-core-2.10.5.jar:/home/philip/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.10.5/jackson-datatype-jdk8-2.10.5.jar:/home/philip/.m2/repository/org/rocksdb/rocksdbjni/5.18.4/rocksdbjni-5.18.4.jar:/home/philip/.m2/repository/org/projectlombok/lombok/1.18.26/lombok-1.18.26.jar:"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="/home/philip"/>
+    <property name="user.language" value="en"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2022-10-18"/>
+    <property name="java.home" value="/usr/lib/jvm/java-11-openjdk-amd64"/>
+    <property name="file.separator" value="/"/>
+    <property name="basedir" value="/home/philip/js-programming/product_recommendation/kafka_reader"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment"/>
+    <property name="surefire.real.class.path" value="/home/philip/js-programming/product_recommendation/kafka_reader/target/surefire/surefirebooter14549296826042660296.jar"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="11.0.17+8-post-Ubuntu-1ubuntu220.04"/>
+    <property name="user.name" value="philip"/>
+    <property name="path.separator" value=":"/>
+    <property name="os.version" value="5.15.83.1-microsoft-standard-WSL2"/>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="localRepository" value="/home/philip/.m2/repository"/>
+    <property name="java.vendor.url.bug" value="https://bugs.launchpad.net/ubuntu/+source/openjdk-lts"/>
+    <property name="java.io.tmpdir" value="/tmp"/>
+    <property name="java.version" value="11.0.17"/>
+    <property name="user.dir" value="/home/philip/js-programming/product_recommendation/kafka_reader"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="java.awt.printerjob" value="sun.print.PSPrinterJob"/>
+    <property name="sun.os.patch.level" value="unknown"/>
+    <property name="java.library.path" value="/usr/java/packages/lib:/usr/lib/x86_64-linux-gnu/jni:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/usr/lib/jni:/lib:/usr/lib"/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="java.vendor" value="Ubuntu"/>
+    <property name="java.vm.version" value="11.0.17+8-post-Ubuntu-1ubuntu220.04"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="55.0"/>
+  </properties>
+  <testcase name="shouldAnswerWithTrue" classname="com.example.AppTest" time="0.001"/>
+</testsuite>
