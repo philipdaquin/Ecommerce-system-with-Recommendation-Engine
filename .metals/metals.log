@@ -10,3 +10,250 @@ SLF4J: See https://www.slf4j.org/codes.html#ignoredBindings for an explanation.
 2023.02.28 14:46:50 INFO  time: initialize in 7.8s[0m
 2023.02.28 14:47:00 WARN  Build server is not auto-connectable.[0m
 2023.02.28 14:47:00 WARN  no build tool detected in workspace '/home/philip/js-programming/product_service'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+2023.02.28 14:52:37 INFO  no build target found for /home/philip/js-programming/product_service/recommender/spark_etl/src/test/scala/example/HelloSuite.scala. Using presentation compiler with project's scala-library version: 3.2.1[0m
+Feb 28, 2023 2:52:49 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleNotification
+WARNING: Notification threw an exception: {
+  "jsonrpc": "2.0",
+  "method": "textDocument/didOpen",
+  "params": {
+    "textDocument": {
+      "uri": "file:///home/philip/js-programming/product_service/recommender/spark_etl/src/main/scala/example/Spark.scala",
+      "languageId": "scala",
+      "version": 1,
+      "text": "package com.example\n\nimport java.util.logging.Logger\nimport java.util.Properties\nimport org.apache.spark.sql.{SparkSession, DataFrame, SaveMode}\nimport org.apache.spark.sql.functions.{count, desc, rank, sum}\nimport org.apache.spark.sql.expressions.Window\n\nobject Spark { \n\n\n  def loadTable(\n    spark: SparkSession, \n    sourceUrl: String, \n    properties: Properties, \n    tableName: String): DataFrame \u003d {\n      spark.read.jdbc(sourceUrl, tableName, properties)\n  }\n\n  def saveTable( dataframe: DataFrame, target: String, properties: Properties, tableName: String): Unit \u003d {\n    dataframe.write.mode(SaveMode.Overwrite)\n      .jdbc(target, tableName, properties)\n    \n  }\n\n\n  def main(args: Array[String]): Unit \u003d {\n\n    val sourceUrl \u003d \"jdbc:postgresql://localhost:5432/data-db\"\n    val targetUrl \u003d \"jdbc:postgresql://localhost:5432/bestseller-db\"\n    val username \u003d \"postgres\"\n    val password \u003d \"password\"\n    \n    val properties \u003d new Properties()\n    properties.put(\"user\", username)\n    properties.put(\"password\", password)\n\n    val sparkSession \u003d SparkSession\n      .builder()\n      .appName(\"ETL\")\n      .master(\"local[*]\")\n      .getOrCreate()\n\n    // Read tables from database into dataframes\n    val products \u003d loadTable(sparkSession, sourceUrl, properties, \"products\")\n    val order \u003d loadTable(sparkSession, sourceUrl, properties, \"order\")\n    val orderItems \u003d loadTable(sparkSession, sourceUrl, properties, \"orderItems\")\n    \n    val userPurchases \u003d order\n      .join(orderItems, \"order_id\")\n      .select(\"user_id\", \"product_id\")\n      .orderBy(\"user_id\")\n      .distinct()\n    \n    val saleAmountOfProduct \u003d userPurchases\n      .join(products, \"product_id\")\n      .groupBy(\"product_id\", \"category_id\")\n      .agg(count(\"*\").alias(\"sale_amount\"))\n      .orderBy(desc(\"sale_amount\"))\n    \n    val spec \u003d Window.partitionBy(\"category_id\").orderBy(desc(\"sale_amount\"))\n    val saleRanking \u003d saleAmountOfProduct.withColumn(\"rank\",rank.over(spec))\n\n    val bestSellers \u003d saleRanking\n      .filter(\"rank \u003c\u003d 10\")\n      .select(\"product_id\", \"cateogory_id\", \"sale_amount\")\n    \n    saveTable(products, targetUrl, properties, \"products\")\n    saveTable(bestSellers, targetUrl, properties, \"bestseller_product\")\n\n\n    sparkSession.stop()\n\n    \n  }\n}"
+    }
+  }
+}
+java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+	at org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint.lambda$null$0(GenericEndpoint.java:67)
+	at org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint.notify(GenericEndpoint.java:152)
+	at org.eclipse.lsp4j.jsonrpc.RemoteEndpoint.handleNotification(RemoteEndpoint.java:220)
+	at org.eclipse.lsp4j.jsonrpc.RemoteEndpoint.consume(RemoteEndpoint.java:187)
+	at org.eclipse.lsp4j.jsonrpc.json.StreamMessageProducer.handleMessage(StreamMessageProducer.java:194)
+	at org.eclipse.lsp4j.jsonrpc.json.StreamMessageProducer.listen(StreamMessageProducer.java:94)
+	at org.eclipse.lsp4j.jsonrpc.json.ConcurrentMessageProcessor.run(ConcurrentMessageProcessor.java:113)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:515)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+Caused by: java.lang.reflect.InvocationTargetException
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint.lambda$null$0(GenericEndpoint.java:65)
+	... 11 more
+Caused by: java.nio.file.NoSuchFileException: /home/philip/js-programming/product_service/recommender/spark_etl/src/main/scala/example/Spark.scala
+	at java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:92)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:111)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:116)
+	at java.base/sun.nio.fs.UnixFileSystemProvider.newByteChannel(UnixFileSystemProvider.java:219)
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:371)
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:422)
+	at java.base/java.nio.file.Files.readAllBytes(Files.java:3206)
+	at scala.meta.internal.io.PlatformFileIO$.slurp(PlatformFileIO.scala:45)
+	at scala.meta.internal.io.FileIO$.slurp(FileIO.scala:24)
+	at scala.meta.internal.metals.MetalsLanguageServer.didOpen(MetalsLanguageServer.scala:1123)
+	... 16 more
+
+Feb 28, 2023 2:52:49 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleNotification
+WARNING: Notification threw an exception: {
+  "jsonrpc": "2.0",
+  "method": "textDocument/didOpen",
+  "params": {
+    "textDocument": {
+      "uri": "file:///home/philip/js-programming/product_service/recommender/spark_etl/target/test-classes/example/HelloSuite.scala",
+      "languageId": "scala",
+      "version": 1,
+      "text": "package com.example\n\nclass HelloSuite extends munit.FunSuite {\n  test(\"numbers\") {\n    val obtained \u003d 42\n    val expected \u003d 43\n    assertEquals(obtained, expected)\n  }\n\n}"
+    }
+  }
+}
+java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+	at org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint.lambda$null$0(GenericEndpoint.java:67)
+	at org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint.notify(GenericEndpoint.java:152)
+	at org.eclipse.lsp4j.jsonrpc.RemoteEndpoint.handleNotification(RemoteEndpoint.java:220)
+	at org.eclipse.lsp4j.jsonrpc.RemoteEndpoint.consume(RemoteEndpoint.java:187)
+	at org.eclipse.lsp4j.jsonrpc.json.StreamMessageProducer.handleMessage(StreamMessageProducer.java:194)
+	at org.eclipse.lsp4j.jsonrpc.json.StreamMessageProducer.listen(StreamMessageProducer.java:94)
+	at org.eclipse.lsp4j.jsonrpc.json.ConcurrentMessageProcessor.run(ConcurrentMessageProcessor.java:113)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:515)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+Caused by: java.lang.reflect.InvocationTargetException
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint.lambda$null$0(GenericEndpoint.java:65)
+	... 11 more
+Caused by: java.nio.file.NoSuchFileException: /home/philip/js-programming/product_service/recommender/spark_etl/target/test-classes/example/HelloSuite.scala
+	at java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:92)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:111)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:116)
+	at java.base/sun.nio.fs.UnixFileSystemProvider.newByteChannel(UnixFileSystemProvider.java:219)
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:371)
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:422)
+	at java.base/java.nio.file.Files.readAllBytes(Files.java:3206)
+	at scala.meta.internal.io.PlatformFileIO$.slurp(PlatformFileIO.scala:45)
+	at scala.meta.internal.io.FileIO$.slurp(FileIO.scala:24)
+	at scala.meta.internal.metals.MetalsLanguageServer.didOpen(MetalsLanguageServer.scala:1123)
+	... 16 more
+
+Feb 28, 2023 2:52:49 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleNotification
+WARNING: Notification threw an exception: {
+  "jsonrpc": "2.0",
+  "method": "textDocument/didOpen",
+  "params": {
+    "textDocument": {
+      "uri": "file:///home/philip/js-programming/product_service/recommender/spark_etl/src/test/scala/example/HelloSuite.scala",
+      "languageId": "scala",
+      "version": 1,
+      "text": "package com.example\n\nclass HelloSuite extends munit.FunSuite {\n  test(\"numbers\") {\n    val obtained \u003d 42\n    val expected \u003d 43\n    assertEquals(obtained, expected)\n  }\n\n}"
+    }
+  }
+}
+java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+	at org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint.lambda$null$0(GenericEndpoint.java:67)
+	at org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint.notify(GenericEndpoint.java:152)
+	at org.eclipse.lsp4j.jsonrpc.RemoteEndpoint.handleNotification(RemoteEndpoint.java:220)
+	at org.eclipse.lsp4j.jsonrpc.RemoteEndpoint.consume(RemoteEndpoint.java:187)
+	at org.eclipse.lsp4j.jsonrpc.json.StreamMessageProducer.handleMessage(StreamMessageProducer.java:194)
+	at org.eclipse.lsp4j.jsonrpc.json.StreamMessageProducer.listen(StreamMessageProducer.java:94)
+	at org.eclipse.lsp4j.jsonrpc.json.ConcurrentMessageProcessor.run(ConcurrentMessageProcessor.java:113)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:515)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+Caused by: java.lang.reflect.InvocationTargetException
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint.lambda$null$0(GenericEndpoint.java:65)
+	... 11 more
+Caused by: java.nio.file.NoSuchFileException: /home/philip/js-programming/product_service/recommender/spark_etl/src/test/scala/example/HelloSuite.scala
+	at java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:92)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:111)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:116)
+	at java.base/sun.nio.fs.UnixFileSystemProvider.newByteChannel(UnixFileSystemProvider.java:219)
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:371)
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:422)
+	at java.base/java.nio.file.Files.readAllBytes(Files.java:3206)
+	at scala.meta.internal.io.PlatformFileIO$.slurp(PlatformFileIO.scala:45)
+	at scala.meta.internal.io.FileIO$.slurp(FileIO.scala:24)
+	at scala.meta.internal.metals.MetalsLanguageServer.didOpen(MetalsLanguageServer.scala:1123)
+	... 16 more
+
+Feb 28, 2023 2:52:49 PM org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleNotification
+WARNING: Notification threw an exception: {
+  "jsonrpc": "2.0",
+  "method": "textDocument/didOpen",
+  "params": {
+    "textDocument": {
+      "uri": "file:///home/philip/js-programming/product_service/recommender/spark_etl/target/classes/example/Spark.scala",
+      "languageId": "scala",
+      "version": 1,
+      "text": "package com.example\n\nimport java.util.logging.Logger\nimport java.util.Properties\nimport org.apache.spark.sql.{SparkSession, DataFrame, SaveMode}\nimport org.apache.spark.sql.functions.{count, desc, rank, sum}\nimport org.apache.spark.sql.expressions.Window\n\nobject Spark { \n\n\n  def loadTable(\n    spark: SparkSession, \n    sourceUrl: String, \n    properties: Properties, \n    tableName: String): DataFrame \u003d {\n      spark.read.jdbc(sourceUrl, tableName, properties)\n  }\n\n  def saveTable( dataframe: DataFrame, target: String, properties: Properties, tableName: String): Unit \u003d {\n    dataframe.write.mode(SaveMode.Overwrite)\n      .jdbc(target, tableName, properties)\n    \n  }\n\n\n  def main(args: Array[String]): Unit \u003d {\n\n    val sourceUrl \u003d \"jdbc:postgresql://localhost:5432/data-db\"\n    val targetUrl \u003d \"jdbc:postgresql://localhost:5432/bestseller-db\"\n    val username \u003d \"postgres\"\n    val password \u003d \"password\"\n    \n    val properties \u003d new Properties()\n    properties.put(\"user\", username)\n    properties.put(\"password\", password)\n\n    val sparkSession \u003d SparkSession\n      .builder()\n      .appName(\"ETL\")\n      .master(\"local[*]\")\n      .getOrCreate()\n\n    // Read tables from database into dataframes\n    val products \u003d loadTable(sparkSession, sourceUrl, properties, \"products\")\n    val order \u003d loadTable(sparkSession, sourceUrl, properties, \"order\")\n    val orderItems \u003d loadTable(sparkSession, sourceUrl, properties, \"orderItems\")\n    \n    val userPurchases \u003d order\n      .join(orderItems, \"order_id\")\n      .select(\"user_id\", \"product_id\")\n      .orderBy(\"user_id\")\n      .distinct()\n    \n    val saleAmountOfProduct \u003d userPurchases\n      .join(products, \"product_id\")\n      .groupBy(\"product_id\", \"category_id\")\n      .agg(count(\"*\").alias(\"sale_amount\"))\n      .orderBy(desc(\"sale_amount\"))\n    \n    val spec \u003d Window.partitionBy(\"category_id\").orderBy(desc(\"sale_amount\"))\n    val saleRanking \u003d saleAmountOfProduct.withColumn(\"rank\",rank.over(spec))\n\n    val bestSellers \u003d saleRanking\n      .filter(\"rank \u003c\u003d 10\")\n      .select(\"product_id\", \"cateogory_id\", \"sale_amount\")\n    \n    saveTable(products, targetUrl, properties, \"products\")\n    saveTable(bestSellers, targetUrl, properties, \"bestseller_product\")\n\n\n    sparkSession.stop()\n\n    \n  }\n}"
+    }
+  }
+}
+java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+	at org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint.lambda$null$0(GenericEndpoint.java:67)
+	at org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint.notify(GenericEndpoint.java:152)
+	at org.eclipse.lsp4j.jsonrpc.RemoteEndpoint.handleNotification(RemoteEndpoint.java:220)
+	at org.eclipse.lsp4j.jsonrpc.RemoteEndpoint.consume(RemoteEndpoint.java:187)
+	at org.eclipse.lsp4j.jsonrpc.json.StreamMessageProducer.handleMessage(StreamMessageProducer.java:194)
+	at org.eclipse.lsp4j.jsonrpc.json.StreamMessageProducer.listen(StreamMessageProducer.java:94)
+	at org.eclipse.lsp4j.jsonrpc.json.ConcurrentMessageProcessor.run(ConcurrentMessageProcessor.java:113)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:515)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+Caused by: java.lang.reflect.InvocationTargetException
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint.lambda$null$0(GenericEndpoint.java:65)
+	... 11 more
+Caused by: java.nio.file.NoSuchFileException: /home/philip/js-programming/product_service/recommender/spark_etl/target/classes/example/Spark.scala
+	at java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:92)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:111)
+	at java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:116)
+	at java.base/sun.nio.fs.UnixFileSystemProvider.newByteChannel(UnixFileSystemProvider.java:219)
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:371)
+	at java.base/java.nio.file.Files.newByteChannel(Files.java:422)
+	at java.base/java.nio.file.Files.readAllBytes(Files.java:3206)
+	at scala.meta.internal.io.PlatformFileIO$.slurp(PlatformFileIO.scala:45)
+	at scala.meta.internal.io.FileIO$.slurp(FileIO.scala:24)
+	at scala.meta.internal.metals.MetalsLanguageServer.didOpen(MetalsLanguageServer.scala:1123)
+	... 16 more
+
+2023.02.28 14:52:50 WARN  no build target for: /home/philip/js-programming/product_service/product_recommendation/spark_etl/target/test-classes/example/HelloSuite.scala[0m
+2023.02.28 14:52:50 WARN  no build target for: /home/philip/js-programming/product_service/product_recommendation/spark_etl/target/classes/example/Spark.scala[0m
+2023.02.28 14:52:50 WARN  no build target for: /home/philip/js-programming/product_service/product_recommendation/spark_etl/src/test/scala/example/HelloSuite.scala[0m
+2023.02.28 14:52:50 WARN  no build target for: /home/philip/js-programming/product_service/product_recommendation/spark_etl/src/main/scala/example/Spark.scala[0m
+2023.02.28 14:52:52 WARN  no build target for: /home/philip/js-programming/product_service/product_recommendation/spark_etl/src/main/scala/example/Spark.scala[0m
+2023.02.28 14:52:52 WARN  no build target for: /home/philip/js-programming/product_service/product_recommendation/spark_etl/target/test-classes/example/HelloSuite.scala[0m
+2023.02.28 14:52:52 WARN  no build target for: /home/philip/js-programming/product_service/product_recommendation/spark_etl/src/test/scala/example/HelloSuite.scala[0m
+2023.02.28 14:52:52 WARN  no build target for: /home/philip/js-programming/product_service/product_recommendation/spark_etl/target/classes/example/Spark.scala[0m
+Feb 28, 2023 2:52:55 PM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTrace
+2023.02.28 14:53:17 INFO  Detected new build tool in /home/philip/js-programming/product_service/.bsp/sbt.json[0m
+2023.02.28 14:53:17 INFO  Attempting to connect to the build server...[0m
+2023.02.28 14:53:17 INFO  Running BSP server [/usr/lib/jvm/java-11-openjdk-amd64/bin/java, -Xms100m, -Xmx100m, -classpath, /home/philip/.cache/sbt/boot/sbt-launch/1.7.1/sbt-launch-1.7.1.jar, -Dsbt.script=/usr/bin/sbt, xsbt.boot.Boot, -bsp][0m
+2023.02.28 14:53:17 INFO  tracing is disabled for protocol BSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /home/philip/js-programming/product_service/.metals/bsp.trace.json or /home/philip/.cache/metals/bsp.trace.json[0m
+2023.02.28 14:53:18 WARN  no build target for: /home/philip/js-programming/product_service/project/project/metals.sbt[0m
+2023.02.28 14:53:18 WARN  no build target for: /home/philip/js-programming/product_service/project/metals.sbt[0m
+2023.02.28 14:53:23 INFO  time: Connected to build server in 5.4s[0m
+2023.02.28 14:53:23 INFO  Connected to Build server: sbt v1.7.1[0m
+2023.02.28 14:53:23 INFO  Processing workspace/buildTargets[0m
+2023.02.28 14:53:23 INFO  Processing buildTarget/scalacOptions[0m
+2023.02.28 14:53:30 INFO  Processing buildTarget/sources[0m
+2023.02.28 14:53:30 INFO  Processing buildTarget/dependencySources[0m
+2023.02.28 14:53:32 INFO  Fetching artifacts of [0m
+2023.02.28 14:59:54 INFO  Fetched artifacts of [0m
+2023.02.28 14:59:54 INFO  Processing buildTarget/jvmRunEnvironment[0m
+2023.02.28 14:59:54 INFO  compiling product_service[0m
+2023.02.28 14:59:54 INFO  compiling product_service-test[0m
+2023.02.28 14:59:54 INFO  time: Imported build in 6m31s[0m
+2023.02.28 15:01:23 WARN  Could not find java sources in /usr/lib/jvm/src.zip, /usr/lib/jvm/lib/src.zip, /usr/lib/jvm/default-java/src.zip, /usr/lib/jvm/default-java/lib/src.zip. Java symbols will not be available.[0m
+2023.02.28 15:01:29 WARN  Could not find java sources in /usr/lib/jvm/src.zip, /usr/lib/jvm/lib/src.zip, /usr/lib/jvm/default-java/src.zip, /usr/lib/jvm/default-java/lib/src.zip. Java symbols will not be available.[0m
+2023.02.28 15:01:29 WARN  Could not find java sources in /usr/lib/jvm/src.zip, /usr/lib/jvm/lib/src.zip, /usr/lib/jvm/default-java/src.zip, /usr/lib/jvm/default-java/lib/src.zip. Java symbols will not be available.[0m
+2023.02.28 15:01:29 INFO  time: indexed workspace in 1m34s[0m
+2023.02.28 15:01:29 WARN  sbt does not support `buildTarget/inverseSources`, unable to fetch targets owning source.[0m
+2023.02.28 15:01:29 INFO  Processing buildTarget/scalaMainClasses[0m
+2023.02.28 15:01:29 WARN  sbt does not support `buildTarget/inverseSources`, unable to fetch targets owning source.[0m
+2023.02.28 15:01:29 WARN  no build target for: /home/philip/js-programming/product_service/product_recommendation/spark_etl/target/classes/example/Spark.scala[0m
+2023.02.28 15:01:29 WARN  no build target for: /home/philip/js-programming/product_service/product_recommendation/spark_etl/src/main/scala/example/Spark.scala[0m
+2023.02.28 15:01:29 WARN  sbt does not support `buildTarget/inverseSources`, unable to fetch targets owning source.[0m
+2023.02.28 15:01:29 WARN  no build target for: /home/philip/js-programming/product_service/recommender/spark_etl/target/test-classes/example/HelloSuite.scala[0m
+2023.02.28 15:01:29 WARN  sbt does not support `buildTarget/inverseSources`, unable to fetch targets owning source.[0m
+2023.02.28 15:01:29 WARN  no build target for: /home/philip/js-programming/product_service/recommender/spark_etl/target/classes/example/Spark.scala[0m
+2023.02.28 15:01:29 WARN  sbt does not support `buildTarget/inverseSources`, unable to fetch targets owning source.[0m
+2023.02.28 15:01:29 WARN  no build target for: /home/philip/js-programming/product_service/product_recommendation/spark_etl/src/test/scala/example/HelloSuite.scala[0m
+2023.02.28 15:01:29 WARN  sbt does not support `buildTarget/inverseSources`, unable to fetch targets owning source.[0m
+2023.02.28 15:01:29 WARN  no build target for: /home/philip/js-programming/product_service/product_recommendation/spark_etl/target/test-classes/example/HelloSuite.scala[0m
+2023.02.28 15:01:29 INFO  compiling product_service[0m
+2023.02.28 15:01:34 INFO  time: compiled product_service in 5.07s[0m
+2023.02.28 15:01:34 INFO  compiling product_service-test[0m
+2023.02.28 15:01:34 INFO  time: compiled product_service-test in 2ms[0m
+2023.02.28 15:01:34 INFO  Processing buildTarget/scalaTestClasses[0m
+2023.02.28 15:01:34 INFO  compiling product_service[0m
+2023.02.28 15:01:34 INFO  time: compiled product_service in 2ms[0m
+2023.02.28 15:01:34 INFO  compiling product_service-test[0m
+2023.02.28 15:01:34 INFO  time: compiled product_service-test in 1ms[0m
+2023.02.28 15:27:15 WARN  sbt does not support `buildTarget/inverseSources`, unable to fetch targets owning source.[0m
+2023.02.28 15:27:15 WARN  no build target for: /home/philip/js-programming/product_service/recommender/spark_etl/target/test-classes/example/HelloSuite.scala[0m
+2023.02.28 15:27:15 WARN  sbt does not support `buildTarget/inverseSources`, unable to fetch targets owning source.[0m
+2023.02.28 15:27:15 WARN  sbt does not support `buildTarget/inverseSources`, unable to fetch targets owning source.[0m
+2023.02.28 15:27:15 WARN  no build target for: /home/philip/js-programming/product_service/recommender/spark_etl/target/classes/example/Spark.scala[0m
+2023.02.28 15:27:15 WARN  no build target for: /home/philip/js-programming/product_service/recommender/spark_etl/src/test/scala/example/HelloSuite.scala[0m
+2023.02.28 15:27:15 WARN  sbt does not support `buildTarget/inverseSources`, unable to fetch targets owning source.[0m
+2023.02.28 15:27:15 WARN  no build target for: /home/philip/js-programming/product_service/recommender/spark_etl/src/main/scala/example/Spark.scala[0m

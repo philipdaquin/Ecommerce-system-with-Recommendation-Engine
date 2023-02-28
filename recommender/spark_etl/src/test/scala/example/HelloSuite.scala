@@ -1,4 +1,4 @@
-package com.example
+
 
 class HelloSuite extends munit.FunSuite {
   test("numbers") {
