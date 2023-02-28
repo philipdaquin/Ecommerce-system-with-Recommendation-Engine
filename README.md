@@ -1,4 +1,4 @@
-# java_ecommerce
+# Ecommerce system with Recommendation Engine
 
 Spring MVC Microservices
 - Java
